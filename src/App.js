@@ -10,31 +10,31 @@ export default () => {
   useEffect(() => {
     const loadDataFromAPI = async () => {
       const response = await api.get('/repositories');
-      setRepositories(response.data);
+      return setRepositories(response.data);
     };
 
     loadDataFromAPI();
-  }, [repositories]);
+  }, []);
 
   async function handleAddRepository() {
     const repository = {
       id: uuid(),
-      title: 'rs-module01-frontend-challenge',
+      title: 'Desafio ReactJS',
       url: 'https://github.com/mCodex/rs-module01-frontend-challenge',
       techs: ['ReactJS'],
     };
 
-    await api.post('/repositories', repository);
+    setRepositories([...repositories, repository]);
 
-    return setRepositories([...repositories, repository]);
+    return api.post('/repositories', repository);
   }
 
   async function handleRemoveRepository(id) {
-    await api.delete(`/repositories/${id}`);
-
     const newRepositories = repositories.filter((r) => r.id !== id);
 
     setRepositories(newRepositories);
+
+    return api.delete(`/repositories/${id}`);
   }
 
   return (
@@ -42,7 +42,7 @@ export default () => {
       <ul data-testid="repository-list">
         {repositories.map(({ id, title }) => (
           <li key={id}>
-            {id} - {title}
+            {title}
             <button type="button" onClick={() => handleRemoveRepository(id)}>
               Remover
             </button>
